@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Sequential Model - Johnson Algorithm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #ffffff;
+            height: 100vh;
+        }
+
+        header {
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 100%;
+        }
+
+        #BasicForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+        }
+
+        h4 {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 36px;
+            line-height: 44px;
+            letter-spacing: -0.02em;
+            color: #101828;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 40px;
+            gap: 24px;
+            background: #ffffff;
+            box-shadow: 0px 4px 8px -2px rgba(16, 24, 40, 0.1),
+                0px 2px 4px -2px rgba(16, 24, 40, 0.06);
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .inputWithLabel {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .inputWithLabel>span {
+            font-style: normal;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            color: #344054;
+        }
+
+        #BasicForm input {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 8px 12px;
+            gap: 8px;
+            background: #ffffff;
+            border: 1px solid #d0d5dd;
+            box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+            border-radius: 8px;
+            width: 320px;
+            height: 40px;
+        }
+
+        button[type="submit"] {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 18px;
+            gap: 8px;
+            width: -webkit-fill-available;
+            background: #7f56d9;
+            border: 1px solid #7f56d9;
+            box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+            border-radius: 8px;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 24px;
+            color: #ffffff;
+        }
+
+        #FormTable,
+        #OutputTable {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            background: #ffffff;
+            border: 1px solid #eaecf0;
+            box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.1),
+                0px 1px 2px rgba(16, 24, 40, 0.06);
+            border-radius: 12px;
+        }
+
+        #OutputTable {
+            width: 100%;
+            max-width: 1280px;
+        }
+
+        tbody td {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            height: 72px;
+        }
+
+        tr {
+            display: flex;
+            width: -webkit-fill-available;
+        }
+
+        tbody input {
+            width: -webkit-fill-available;
+            height: -webkit-fill-available;
+            border: none;
+            text-align: center;
+        }
+
+        #FormTable tr td:nth-child(1),
+        #FormTable tr th:nth-child(1) {
+            width: 120px;
+        }
+
+        #FormTable tr td:nth-child(2),
+        #FormTable tr td:nth-child(3),
+        #FormTable tr td:nth-child(4),
+        #FormTable tr th:nth-child(2),
+        #FormTable tr th:nth-child(3),
+        #FormTable tr th:nth-child(4) {
+            width: 160px;
+        }
+
+        #OutputTable tr th,
+        #OutputTable tr td {
+            width: 160px;
+            justify-content: center;
+        }
+
+        /* Style the error div */
+        #errorDiv {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="Logo.svg" />
+    </header>
+    <main>
+        <section id="BasicForm">
+            <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            width: 100%;
+          ">
+                <h4 style="text-align: center">Sequential Model Johnson Algorithm</h4>
+            </div>
+            <form action="#" method="post" id="BasicDetailForm">
+                <div class="col">
+                    <div class="row">
+                        <div class="inputWithLabel">
+                            <span>Job</span>
+                            <input type="text" name="Job-title" placeholder="Title" />
+                        </div>
+                        <div class="inputWithLabel">
+                            <span>Number of Job</span>
+                            <input type="number" name="Job-Qnt" placeholder="Enter Job Quantity" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="inputWithLabel">
+                            <span>First Machine Name</span>
+                            <input type="text" name="M1-name" placeholder="M1" />
+                        </div>
+                        <div class="inputWithLabel">
+                            <span>Second Machine Name</span>
+                            <input type="text" name="M2-name" placeholder="M2" />
+                        </div>
+                    </div>
+                </div>
+                <div style="
+              display: flex;
+              width: -webkit-fill-available;
+              flex-direction: column;
+              align-items: flex-start;
+            ">
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
+        </section>
+
+        <section style="display: none" id="FormTable">
+            <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+            width: -webkit-fill-available;
+            background: #ffffff;
+          ">
+                <div style="
+              display: flex;
+              flex-direction: row;
+              align-items: flex-start;
+              padding: 20px 24px 0px;
+              gap: 16px;
+            ">
+                    <p style="
+                font-style: normal;
+                font-weight: 600;
+                font-size: 18px;
+                line-height: 28px;
+                color: #101828;
+              ">
+                        Johnson’s algorithm problem
+                    </p>
+                </div>
+                <div style="
+              width: -webkit-fill-available;
+              height: 1px;
+              background: #eaecf0;
+            "></div>
+            </div>
+
+            <table id="INPUT-TABLE" style="
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 600px;
+          ">
+                <thead style="width: -webkit-fill-available">
+                    <tr style="
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                height: 44px;
+                background: #f9fafb;
+                border-bottom: 1px solid #eaecf0;
+              ">
+                        <th>{Job Title}</th>
+                        <th>{M1 Name}</th>
+                        <th>{M2 Name}</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody style="width: -webkit-fill-available"></tbody>
+            </table>
+            <form action="#" method="post" id="TableInputForm" style="width: -webkit-fill-available">
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+
+        <section style="display: none" id="OutputTable">
+            <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+            width: -webkit-fill-available;
+            background: #ffffff;
+          ">
+                <div style="
+              display: flex;
+              flex-direction: row;
+              align-items: flex-start;
+              padding: 20px 24px 0px;
+              gap: 16px;
+            ">
+                    <p style="
+                font-style: normal;
+                font-weight: 600;
+                font-size: 18px;
+                line-height: 28px;
+                color: #101828;
+              ">
+                        Johnson's algorithm problem
+                    </p>
+                </div>
+                <div style="
+              width: -webkit-fill-available;
+              height: 1px;
+              background: #eaecf0;
+            "></div>
+            </div>
+
+            <table id="Output-TABLE" style="
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            max-width: 1280px;
+            width: 100%;
+          ">
+                <thead style="width: -webkit-fill-available">
+                    <tr style="
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                height: 44px;
+                background: #f9fafb;
+                border-bottom: 1px solid #eaecf0;
+              ">
+                        <th>{Job Title}</th>
+                        <th>In Time</th>
+                        <th>{M1 Name}</th>
+                        <th>Out Time</th>
+                        <th>In Time</th>
+                        <th>{M2 Name}</th>
+                        <th>Out Time</th>
+                        <th>Idle Time</th>
+                    </tr>
+                </thead>
+                <tbody style="width: -webkit-fill-available"></tbody>
+            </table>
+            <p id="final-cal" style="font-style: normal;font-weight: 400;font-size: 18px;line-height: 28px;text-align: center;color: #475467;width: -webkit-fill-available;"></p>
+        </section>
+
+        <div id="errorDiv"></div>
+
+        <script>
+            // Define a global variable to store the form data
+            let formData = {};
+            const data = [];
+
+            // Get the form element
+            form = document.getElementById("BasicDetailForm");
+            // Add a submit event listener to the basic inputForm
+            form.addEventListener("submit", function (event) {
+                // Prevent the default form submission
+                event.preventDefault();
+                // Get the form inputs
+                const jobTitleInput = document.getElementsByName("Job-title")[0];
+                const jobQntInput = document.getElementsByName("Job-Qnt")[0];
+                const m1NameInput = document.getElementsByName("M1-name")[0];
+                const m2NameInput = document.getElementsByName("M2-name")[0];
+
+                // Validate the form inputs
+                const errors = [];
+
+                if (!jobTitleInput.value) {
+                    errors.push("Please enter a job title");
+                }
+                if (!jobQntInput.value || jobQntInput.value < 1) {
+                    errors.push("Please enter a valid number of jobs");
+                }
+                if (!m1NameInput.value) {
+                    errors.push("Please enter the first machine name");
+                }
+                if (!m2NameInput.value) {
+                    errors.push("Please enter the second machine name");
+                }
+                // If there are errors, display them and exit
+                if (errors.length > 0) {
+                    const errorDiv = document.getElementById("errorDiv");
+                    errorDiv.innerHTML = errors.join("<br>");
+                    return;
+                }
+
+                // Save the form data in the global variable
+                formData = {
+                    jobTitle: jobTitleInput.value,
+                    jobQnt: jobQntInput.value,
+                    m1Name: m1NameInput.value,
+                    m2Name: m2NameInput.value,
+                };
+
+                // Display a success message
+                let str = JSON.stringify(formData, null, 4);
+
+                // print the string on the console
+                console.log(str);
+
+                document.getElementById("BasicForm").style.display = "none";
+                document.getElementById("FormTable").style.display = "";
+                errorDiv.innerHTML = "";
+
+                // Get a reference to the table element
+                const inputTable = document.querySelector("#INPUT-TABLE");
+
+                // Get a reference to the first table heading element
+                inputTable.querySelector(
+                    "th:nth-child(1)"
+                ).textContent = `${formData.jobTitle}`;
+                inputTable.querySelector(
+                    "th:nth-child(2)"
+                ).textContent = `${formData.m1Name}`;
+                inputTable.querySelector(
+                    "th:nth-child(3)"
+                ).textContent = `${formData.m2Name}`;
+
+                // Get a reference to the table body element
+                const tbody = inputTable.querySelector("tbody");
+
+                // Loop through the quantity and add a new row for each iteration
+                for (let i = 0; i < formData.jobQnt; i++) {
+                    // Create a new table row element
+                    const tr = document.createElement("tr");
+
+                    // Add the job ID input cell to the table row
+                    const jobIdTd = document.createElement("td");
+                    const jobIdInput = document.createElement("input");
+                    jobIdInput.type = "text";
+                    jobIdInput.name = `jobid${i + 1}`;
+                    jobIdInput.placeholder = "Job ID";
+                    jobIdTd.appendChild(jobIdInput);
+                    tr.appendChild(jobIdTd);
+
+                    // Add the machine 1 time input cell to the table row
+                    const machine1Td = document.createElement("td");
+                    const machine1Input = document.createElement("input");
+                    machine1Input.type = "number";
+                    machine1Input.name = `machine1${i + 1}`;
+                    machine1Input.placeholder = "Machine 1 Time";
+                    machine1Td.appendChild(machine1Input);
+                    tr.appendChild(machine1Td);
+
+                    // Add the machine 2 time input cell to the table row
+                    const machine2Td = document.createElement("td");
+                    const machine2Input = document.createElement("input");
+                    machine2Input.type = "number";
+                    machine2Input.name = `machine2${i + 1}`;
+                    machine2Input.placeholder = "Machine 2 Time";
+                    machine2Td.appendChild(machine2Input);
+                    tr.appendChild(machine2Td);
+
+                    // Add the quantity input cell to the table row
+                    const quantityTd = document.createElement("td");
+                    const quantityInput = document.createElement("input");
+                    quantityInput.type = "number";
+                    quantityInput.value = 1;
+                    quantityInput.name = `qtn${i + 1}`;
+                    quantityInput.placeholder = "QTN";
+                    quantityTd.appendChild(quantityInput);
+                    tr.appendChild(quantityTd);
+
+                    // Add the new row to the table body
+                    tbody.appendChild(tr);
+                }
+            });
+
+            form = document.getElementById("TableInputForm");
+            form.addEventListener("submit", function (event) {
+                // Prevent the default form submission
+                event.preventDefault();
+                const table = document.getElementById("INPUT-TABLE");
+                const rows = table.querySelectorAll("tbody tr");
+
+                rows.forEach((row) => {
+                    const inputs = row.querySelectorAll("input");
+                    const jobid = inputs[0].value;
+                    const machine1 = inputs[1].value;
+                    const machine2 = inputs[2].value;
+                    const qtn = inputs[3].value;
+
+                    data.push({
+                        jobid,
+                        machine1,
+                        machine2,
+                        qtn,
+                    });
+                });
+
+                for (let i = 0; i < data.length; i++) {
+                    const item = data[i];
+                    if (
+                        item.jobid === "" ||
+                        item.machine1 === "" ||
+                        item.machine2 === "" ||
+                        item.qtn === ""
+                    ) {
+                        errorDiv.innerHTML = "Complete all table First.";
+                        return;
+                    }
+                }
+
+                document.getElementById("FormTable").style.display = "none";
+                document.getElementById("OutputTable").style.display = "";
+                errorDiv.innerHTML = "";
+
+                // Get a reference to the table element
+                const inputTable = document.querySelector("#Output-TABLE");
+
+                // Get a reference to the first table heading element
+                inputTable.querySelector(
+                    "th:nth-child(1)"
+                ).textContent = `${formData.jobTitle}`;
+                inputTable.querySelector(
+                    "th:nth-child(3)"
+                ).textContent = `${formData.m1Name}`;
+                inputTable.querySelector(
+                    "th:nth-child(6)"
+                ).textContent = `${formData.m2Name}`;
+
+                // Get a reference to the table body element
+                const tbody = inputTable.querySelector("tbody");
+
+                SequentialModel(data);
+            });
+
+            function SequentialModel(data) {
+                console.log(data);
+                let table1 = [];
+
+                data.forEach(function (value, index, array) {
+                    table1.push({
+                        Job: value.jobid,
+                        machine1: value.machine1,
+                        machine2: value.machine2,
+                        min: `${Math.min(value.machine1, value.machine2)} ${parseInt(value.machine1) < parseInt(value.machine2)
+                                ? "M1"
+                                : "M2"
+                            }`,
+                    });
+                });
+
+                table1.sort(function (a, b) {
+                    const [aMin, aMachine] = a.min.split(" ");
+                    const [bMin, bMachine] = b.min.split(" ");
+
+                    if (aMachine === "M1" && bMachine === "M1") {
+                        return Number(aMin) - Number(bMin);
+                    }
+
+                    if (aMachine === "M2" && bMachine === "M2") {
+                        return Number(bMin) - Number(aMin);
+                    }
+
+                    if (aMachine === "M1" && bMachine === "M2") {
+                        return -1;
+                    }
+
+                    if (aMachine === "M2" && bMachine === "M1") {
+                        return 1;
+                    }
+                });
+
+                console.log(table1);
+
+                let tableBody = document.querySelector("#Output-TABLE tbody");
+                let tableRows = "";
+                let M1InTime = 0;
+                let M2OutTime = 0;
+
+                let idleTimeM2 = 0;
+                let FinalOutPutTable = [];
+                for (let i = 0; i < table1.length; i++) {
+                    let idleTime = 0;
+                    let job = table1[i];
+                    let newM1OutTime = M1InTime + parseInt(job.machine1);
+                    let newM2InTime = 0;
+                    if (M2OutTime > newM1OutTime) {
+                        newM2InTime = M2OutTime;
+                    } else {
+                        newM2InTime = newM1OutTime;
+                        idleTime = newM1OutTime - M2OutTime;
+                        idleTimeM2 +=idleTime;
+                    }
+                    let newM2OutTime = newM2InTime + parseInt(job.machine2);
+
+                    tableRows += `<tr style="border-bottom: 1px solid #EAECF0;">
+                            <td>${job.Job}</td>
+                            <td>${M1InTime}</td>
+                            <td>${job.machine1}</td>
+                            <td>${newM1OutTime}</td>
+                            <td>${newM2InTime}</td>
+                            <td>${job.machine2}</td>
+                            <td>${newM2OutTime}</td>
+                            <td>${idleTime}</td>
+                          </tr>`;
+
+                    FinalOutPutTable.push({
+                        Job: job.Job,
+                        "IN Time": M1InTime,
+                        M1: job.machine1,
+                        "Out time": newM1OutTime,
+                        "IN Time.1": newM2InTime,
+                        M2: job.machine2,
+                        "Out time.1": newM2OutTime,
+                        "Idle time": idleTime,
+                    });
+
+                    M1InTime = newM1OutTime;
+                    M2OutTime = newM2OutTime;
+                }
+
+                let totalElapseTime = M2OutTime;
+                let idleTimeM1 = M2OutTime - M1InTime;
+
+                document.getElementById('final-cal').innerHTML = `Total Elapse time : <b>${totalElapseTime}</b> <br> Total idle time of M1 : <b>${idleTimeM1}</b> <br>Total idle time of M2 : <b>${idleTimeM2}</b>`
+                console.log(`Total Elapse time :${totalElapseTime} idleA: ${idleTimeM1} idleB: ${idleTimeM2}`)
+                console.table(FinalOutPutTable);
+
+                tableBody.innerHTML = tableRows;
+            }
+        </script>
+    </main>
+</body>
+
+</html>
