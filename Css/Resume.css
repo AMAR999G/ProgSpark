@@ -274,5 +274,6 @@ h2 {
 @media (max-width: 576px) {
     body {
         justify-content: flex-start;
+        overflow: hidden;
     }
 }
